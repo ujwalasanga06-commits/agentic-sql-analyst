@@ -24,7 +24,7 @@ except Exception as e:
     st.stop()
 
 # 2. Gemini API Setup
-google_api_key = "AQ.Ab8RN6KhfcfhGQ3Tu6iZHSaRBHbqTMv3xKIsEmQYlKwXIO_XNQ"
+google_api_key = "AIzaSyC3g0qNbrOysUSD3lwSwOQnR6JUFZ9oAOI"
 genai.configure(api_key=google_api_key)
 model = genai.GenerativeModel('gemini-1.5-flash')
 

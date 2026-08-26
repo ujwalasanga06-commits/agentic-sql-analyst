@@ -31,7 +31,7 @@ except Exception as e:
 google_api_key = "AIzaSyC3g0qNbrOysUSD3lwSwOQnR6JUFZ9oAOI"  # మీ Gemini API Key ఇక్కడ ఇవ్వండి
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
+    model="gemini-pro",
     google_api_key=google_api_key,
     temperature=0
 )

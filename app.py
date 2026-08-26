@@ -9,7 +9,7 @@ st.title("🤖 Agentic SQL Analyst")
 
 # 1. Database Connection
 db_user = "avnadmin"
-db_password = "YOUR_AIVEN_PASSWORD"  # మీ Aiven Password ఇక్కడ ఇవ్వండి
+db_password = "AVNS_BiaiSmKwKGuGiZH25wh"  # మీ Aiven Password ఇక్కడ ఇవ్వండి
 db_host = "mysql-36c5aa20-ujwalasanga06-fb74.j.aivencloud.com"
 db_port = "22381"
 db_name = "defaultdb"
@@ -28,7 +28,7 @@ except Exception as e:
     st.stop()
 
 # 2. Gemini API Setup
-google_api_key = "YOUR_GEMINI_API_KEY"  # మీ Gemini API Key ఇక్కడ ఇవ్వండి
+google_api_key = "AIzaSyC3g0qNbrOysUSD3lwSwOQnR6JUFZ9oAOI"  # మీ Gemini API Key ఇక్కడ ఇవ్వండి
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-1.5-flash",

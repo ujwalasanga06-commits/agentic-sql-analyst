@@ -26,7 +26,7 @@ except Exception as e:
 # 2. Gemini API Setup
 google_api_key = "AIzaSyC3g0qNbrOysUSD3lwSwOQnR6JUFZ9oAOI"
 genai.configure(api_key=google_api_key)
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-3.7-flash')
 
 # 3. Search UI
 user_query = st.text_input("Ask a question about your database:", placeholder="e.g., show all tables")

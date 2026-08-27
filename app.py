@@ -8,10 +8,10 @@ st.set_page_config(page_title="Agentic SQL Analyst - Grok", page_icon="🤖")
 st.title("🤖 Agentic SQL Analyst (Powered by Grok)")
 
 # Render/Railway Environment Variable నుండి కీ ని సేకరిస్తుంది
-grok_api_key = os.getenv("xai-l4yibWYHA6AaJCq0qzhN2s3RfSwQ3BU2bJ9miFhejWHUAYTkOrYMN8KmUiPwunFp6lxoXTqTf63ssdoX")
+grok_api_key = os.getenv("GROK_API_KEY")
 
 if not grok_api_key:
-    st.error("xai-l4yibWYHA6AaJCq0qzhN2s3RfSwQ3BU2bJ9miFhejWHUAYTkOrYMN8KmUiPwunFp6lxoXTqTf63ssdoX")
+    st.error("⚠️ GROK_API_KEY లభించలేదు! Render Variables లో GROK_API_KEY ని యాడ్ చేయండి")
     st.stop()
 
 # Grok Client ಕಾన్ఫిగర్ చేయడం

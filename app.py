@@ -52,7 +52,7 @@ if user_prompt:
     try:
         with st.spinner("Grok AI క్వెరీని తయారుచేస్తోంది..."):
             response = client.chat.completions.create(
-                model="grok-beta",
+                model="grok-2-latest",
                 messages=[
                     {
                         "role": "system",

@@ -1,4 +1,4 @@
 streamlit
-google-generativeai
+openai
 mysql-connector-python
 pandas

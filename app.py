@@ -1,57 +1,77 @@
+import os
 import streamlit as st
+from openai import OpenAI
 import mysql.connector
-import google.generativeai as genai
 import pandas as pd
 
-st.title("🤖 Agentic SQL Analyst")
+st.set_page_config(page_title="Agentic SQL Analyst - Grok", page_icon="🤖")
+st.title("🤖 Agentic SQL Analyst (Powered by Grok)")
 
-# 1. Database Connection
-@st.cache_resource
-def init_db():
-    return mysql.connector.connect(
-        host="mysql-36c5aa20-ujwalasanga06-fb74.j.aivencloud.com",
-        user="avnadmin",
-        password="AVNS_BiaiSmKwKGuGiZH25wh",
-        database="defaultdb",
-        port=22381
-    )
+# Render/Railway Environment Variable నుండి కీ ని సేకరిస్తుంది
+grok_api_key = os.getenv("xai-l4yibWYHA6AaJCq0qzhN2s3RfSwQ3BU2bJ9miFhejWHUAYTkOrYMN8KmUiPwunFp6lxoXTqTf63ssdoX")
 
-try:
-    db = init_db()
-    st.sidebar.success("Connected to Aiven Cloud Database!")
-except Exception as e:
-    st.sidebar.error(f"Connection Failed: {e}")
+if not grok_api_key:
+    st.error("⚠️ GROK_API_KEY లభించలేదు! Render/Railway Variables లో GROK_API_KEY ని యాడ్ చేయండి.")
     st.stop()
 
-# 2. Gemini API Setup
-google_api_key = "AQ.Ab8RN6JQnFINZ9GxnuBZW40qYujOAwzh3iMzrssPY_ygcQMydw"
-genai.configure(api_key=google_api_key)
-model = genai.GenerativeModel('gemini-3.7-flash')
+# Grok Client ಕಾన్ఫిగర్ చేయడం
+client = OpenAI(
+    api_key=grok_api_key,
+    base_url="https://api.x.ai/v1",
+)
 
-# 3. Search UI
-user_query = st.text_input("Ask a question about your database:", placeholder="e.g., show all tables")
+# Database Connection (AIVEN Credentials ఉంటే వాడటానికి)
+def run_sql_query(query):
+    try:
+        db_host = os.getenv("AIVEN_HOST")
+        db_user = os.getenv("AIVEN_USER")
+        db_pass = os.getenv("AIVEN_PASSWORD")
+        db_port = os.getenv("AIVEN_PORT", 3306)
+        db_name = os.getenv("AIVEN_DB")
 
-if user_query:
-    with st.spinner("AI Agent is writing SQL and fetching data..."):
-        try:
-            prompt = f"Convert this natural language request into a pure MySQL query: '{user_query}'. Return ONLY the raw SQL query with no markdown formatting, no backticks, and no extra text."
-            sql_response = model.generate_content(prompt)
-            sql_query = sql_response.text.strip().replace("```sql", "").replace("```", "").strip()
+        if db_host and db_user and db_pass:
+            conn = mysql.connector.connect(
+                host=db_host,
+                user=db_user,
+                password=db_pass,
+                port=int(db_port),
+                database=db_name
+            )
+            df = pd.read_sql(query, conn)
+            conn.close()
+            return df, None
+        else:
+            return None, "Database Credentials లభించలేదు (లేదా మోక్ క్వెరీ మోడ్)."
+    except Exception as e:
+        return None, str(e)
+
+# User Query Input
+user_prompt = st.text_input("Ask a question about your database:", placeholder="Show all tables")
+
+if user_prompt:
+    try:
+        with st.spinner("Grok AI క్వెరీని తయారుచేస్తోంది..."):
+            response = client.chat.completions.create(
+                model="grok-beta",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are an expert SQL analyst. Convert plain English to a SQL query. Output ONLY raw SQL query code, without markdown formatting or markdown backticks."
+                    },
+                    {"role": "user", "content": user_prompt}
+                ]
+            )
             
-            st.write(f"**Generated SQL:** `{sql_query}`")
+            clean_sql = response.choices[0].message.content.strip().replace("```sql", "").replace("```", "").strip()
             
-            cursor = db.cursor()
-            cursor.execute(sql_query)
-            
-            if cursor.description:
-                columns = [col[0] for col in cursor.description]
-                results = cursor.fetchall()
-                df = pd.DataFrame(results, columns=columns)
-                st.write("### Analysis Result:")
+            st.subheader("Generated SQL Query:")
+            st.code(clean_sql, language="sql")
+
+            # Database క్వెరీ ఎగ్జిక్యూషన్
+            df, err = run_sql_query(clean_sql)
+            if df is not None:
+                st.subheader("Query Results:")
                 st.dataframe(df)
-            else:
-                db.commit()
-                st.success("Query executed successfully!")
-                
-        except Exception as e:
-            st.error(f"Error: {e}")
+
+    except Exception as e:
+        st.error(f"Grok API ఎర్రర్: {str(e)}")

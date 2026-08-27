@@ -11,7 +11,7 @@ st.title("🤖 Agentic SQL Analyst (Powered by Grok)")
 grok_api_key = os.getenv("xai-l4yibWYHA6AaJCq0qzhN2s3RfSwQ3BU2bJ9miFhejWHUAYTkOrYMN8KmUiPwunFp6lxoXTqTf63ssdoX")
 
 if not grok_api_key:
-    st.error("⚠️ GROK_API_KEY లభించలేదు! Render/Railway Variables లో GROK_API_KEY ని యాడ్ చేయండి.")
+    st.error("xai-l4yibWYHA6AaJCq0qzhN2s3RfSwQ3BU2bJ9miFhejWHUAYTkOrYMN8KmUiPwunFp6lxoXTqTf63ssdoX")
     st.stop()
 
 # Grok Client ಕಾన్ఫిగర్ చేయడం
